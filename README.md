@@ -3,6 +3,8 @@
 ## Overview
 This is a  Django-based Student Management System  designed to manage students, professors, courses, and grades in an academic setting. It leverages Django's ORM to interact with a PostgreSQL database, providing models to store information about students, courses, professors, and scores. The system also includes authentication, permissions, and session management through Django's built-in models.
 
+**Note** If you're a contributer please read CONTRIBUTING.md
+
 ## Features
 -  Student Management : Add, update, and track student information including personal details, enrollment dates, and contact information.
 -  Course Management : Manage course offerings, including course names, schedules, and semesters.
