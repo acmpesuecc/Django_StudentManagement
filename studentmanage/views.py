@@ -57,13 +57,18 @@ def register_user(request):
     return render(request,'register.html',{'form':form})
 
 def student(request):
-<<<<<<< HEAD
+
     student_records=Student.objects.all()
     accurate=[]
     if request.method=="POST":
         searched = request.POST.get('searched')
         accurate=[i for i in student_records if f"{i.rollno}"==searched or i.firstname==searched or i.lastname==searched or f"{i.phoneno}"==searched or i.email==searched]
-    return render(request,'student.html',{'student_records':student_records, 'accurate':accurate})
+        return render(request,'student.html',{'student_records':student_records, 'accurate':accurate})
+    
+    paginator = Paginator(student_records, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'student.html', {'page_obj': page_obj})
 
 def courses(request):
     course_records=Courses.objects.all()
@@ -71,7 +76,13 @@ def courses(request):
     if request.method=="POST":
         searched = request.POST.get('searched')
         accurate=[i for i in course_records if f"{i.courseid}"==searched or i.coursename==searched or i.semester==searched ]
-    return render(request,'courses.html',{'course_records':course_records,"accurate":accurate})
+        return render(request,'courses.html',{'course_records':course_records,"accurate":accurate})
+
+    paginator = Paginator(course_records, 10)  # Show 10 courses per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'courses.html', {'page_obj': page_obj})
+    
 
 def professor(request):
     professor_records=Professor.objects.all()
@@ -79,28 +90,11 @@ def professor(request):
     if request.method=="POST":
         searched = request.POST.get('searched')
         accurate=[i for i in professor_records if f"{i.profid}"==searched or i.name==searched or f"{i.phoneno}"==searched or i.email==searched]
-    return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
-=======
-    student_records = Student.objects.all()
-    paginator = Paginator(student_records, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'student.html', {'page_obj': page_obj})
-
-def professor(request):
-    professor_records = Professor.objects.all()
+        return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
     paginator = Paginator(professor_records, 10)  # Show 10 professors per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'professor.html', {'page_obj': page_obj})
-
-def courses(request):
-    course_records = Courses.objects.all()
-    paginator = Paginator(course_records, 10)  # Show 10 courses per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'courses.html', {'page_obj': page_obj})
->>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
 
 def student_record(request,pk):
     if request.user.is_authenticated:
@@ -190,13 +184,13 @@ def add_student(request):
         if request.method == "POST":
             form = AddStudentForm(request.POST)
             if form.is_valid():
-                new_record = form.save()  # Saving the form data to a variable named new_record
+                 # Saving the form data to a variable named new_record
                 messages.success(request, "Record Added successfully.")
                 return redirect('student')
         else:
             form = AddStudentForm()
 
-        return render(request, 'add_student.html', {'form': form,'new_record':new_record})
+        return render(request, 'add_student.html', {'form': form})
     else:
         messages.error(request, "You must be logged in.")
         return redirect('home')
@@ -224,7 +218,9 @@ def add_course(request):
         if request.method == "POST":
             form = AddCourseForm(request.POST)
             if form.is_valid():
-                new_record = form.save()  # Saving the form data to a variable named new_record
+                form.save()  # Saving the form data to a variable named new_record
+                new_course = Courses(courseid = form.cleaned_data["courseid"], coursename =form.cleaned_data["coursename"], semester=form.cleaned_data["semester"], startdate= form.cleaned_data["startdate"], enddate = form.cleaned_data["enddate"])
+                new_course.save()
                 messages.success(request, "Record Added successfully.")
                 return redirect('courses')
         else:
@@ -288,3 +284,24 @@ def student_record(request,pk):
 
 
 '''
+
+def student_report(request, rollno):
+    #get the student
+    student = Student.objects.get(pk= rollno)
+    #get the scores of the student in all courses
+    scores = Scores.objects.filter(rollno=rollno)
+    #store the courseids of each course taken by student in a list
+    c_ids = [ c_id for c_id in scores.course_id]
+    courses = Courses.objects.filter(course_id__in = c_ids) #get the course objects filtred by the above course_ids
+    course_d={}
+    for c_id in c_ids:
+        course_name = Courses.objects.get(course_id=c_id) # get the name of each course taken by student
+        grade = Scores.objects.select_related("rollno").get(course_id=c_id) #grade the student scored in each course
+        course_d[course_name] = grade #store in the dictionary
+    
+    return render(request,"student_record.html",{
+        "student":student,
+        "courses":course_d
+    })
+
+

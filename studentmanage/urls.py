@@ -23,7 +23,8 @@ urlpatterns =[
     path('add_student/',views.add_student, name='add_student'),
     path('add_professor/',views.add_professor, name='add_professor'),
     path('add_course/',views.add_course, name='add_course'),
-     path('update_precord/<int:pk>',views.update_precord,name='update_precord'),
-     path('update_crecord/<str:pk>',views.update_crecord,name='update_crecord'),
+    path('update_precord/<int:pk>',views.update_precord,name='update_precord'),
+    path('update_crecord/<str:pk>',views.update_crecord,name='update_crecord'),
+    path('student_report/<str:rollno>',views.student_report, name="student_report")
     #path('delete_record/<int:pk>',views.delete_record,name='delete_record'),
 ]
