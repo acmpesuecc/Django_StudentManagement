@@ -64,6 +64,15 @@
         
 
     </form>
+    <div class="message">
+        {% if messages %}
+          <ul class="messages"> <!--make grammatical changes lol-->
+            {% for msg in messages %}
+              <p>{{ msg }}</p>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
 
     {% endif %}
 

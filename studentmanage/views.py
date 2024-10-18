@@ -4,12 +4,14 @@ from django.contrib import messages
 from .forms import SignUpForm,AddStudentForm,AddProfessorForm,AddCourseForm
 from .models import Student,Courses,Professor,Scores,Taken,Taughtby
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required,user_passes_test
+
+#admin can see EVERYTHING, proffesor can see all students but not all courses, students can see only stuff related to them.
 
 # Create your views here.
 
 def home(request):
 #login page is inside home function cause no one can view webpage without first being logged in
-
     if request.method=='POST':
         '''username=request.POST['username']
         password=request.POST['password']'''
@@ -39,6 +41,11 @@ def logout_user(request):
     return redirect('home')
 
 def register_user(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.method=='POST':
         form=SignUpForm(request.POST)
         if form.is_valid():
@@ -57,8 +64,13 @@ def register_user(request):
     return render(request,'register.html',{'form':form})
 
 def student(request):
-<<<<<<< HEAD
-    student_records=Student.objects.all()
+    #admin can see EVERYTHING, proffesor can see all students, students can see only stuff related to them.
+    if request.user.is_superuser:
+        student_records=Student.objects.all()
+    elif(Professor.objects.filter(email=request.user.email)):
+        student_records=Student.objects.all()
+    else:
+        student_records=Student.objects.filter(email=request.user.email)
     accurate=[]
     if request.method=="POST":
         searched = request.POST.get('searched')
@@ -66,7 +78,12 @@ def student(request):
     return render(request,'student.html',{'student_records':student_records, 'accurate':accurate})
 
 def courses(request):
-    course_records=Courses.objects.all()
+    if request.user.is_superuser:
+        course_records=Courses.objects.all()
+    elif(Professor.objects.filter(email=request.user.email)):
+        course_records=[]
+    else:
+        course_records=Courses.objects.all()
     accurate=[]
     if request.method=="POST":
         searched = request.POST.get('searched')
@@ -80,32 +97,20 @@ def professor(request):
         searched = request.POST.get('searched')
         accurate=[i for i in professor_records if f"{i.profid}"==searched or i.name==searched or f"{i.phoneno}"==searched or i.email==searched]
     return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
-=======
-    student_records = Student.objects.all()
-    paginator = Paginator(student_records, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'student.html', {'page_obj': page_obj})
-
-def professor(request):
-    professor_records = Professor.objects.all()
-    paginator = Paginator(professor_records, 10)  # Show 10 professors per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'professor.html', {'page_obj': page_obj})
-
-def courses(request):
-    course_records = Courses.objects.all()
-    paginator = Paginator(course_records, 10)  # Show 10 courses per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'courses.html', {'page_obj': page_obj})
->>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
 
 def student_record(request,pk):
+    if request.user.is_superuser:
+        pass
+    elif(Professor.objects.filter(email=request.user.email)):
+        pass
+    else:
+        check=Student.objects.get(email=request.user.email)
     if request.user.is_authenticated:
         #look up record
         student_record=Student.objects.get(rollno=pk)
+        if check!=student:
+            messages.error(request,'Error.')
+            return(redirect('home'))
         return render(request,'srecord.html',{'student_record':student_record})
     else:
         messages.success(request,"Login to view")
@@ -115,6 +120,12 @@ def course_record(request,pk):
     if request.user.is_authenticated:
         #look up record
         course_record=Courses.objects.get(courseid=pk)
+        if request.user.is_superuser:
+            pass
+        elif(Professor.objects.filter(email=request.user.email)):
+            course_record=[]
+        else:
+            check=Student.objects.get(email=request.user.email)
         return render(request,'crecord.html',{'course_record':course_record})
     else:
         messages.success(request,"Login to view")
@@ -131,6 +142,11 @@ def prof_record(request,pk):
 
 
 def delete_srecord(request,pk):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         #delete for student
         delete_it=Student.objects.get(rollno=pk)
@@ -142,6 +158,11 @@ def delete_srecord(request,pk):
         return redirect('register')
     
 def delete_crecord(request,pk):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         #delete for course - anything with 401 is deletable
         delete_it=Courses.objects.get(courseid=pk)
@@ -153,6 +174,11 @@ def delete_crecord(request,pk):
         return redirect('register')
     
 def delete_precord(request,pk):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         #delete for professor - anything starting from 3 is deletabloe
         delete_it=Professor.objects.get(profid=pk)
@@ -183,8 +209,12 @@ def delete_precord(request,pk):
         form=AddStudentForm()
     return render(request,'add_student.html',{'form':form})'''
 
-
-def add_student(request):
+def add_student(request): # messages.error(request,'USN does not exist.')
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     new_record=None
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -202,6 +232,11 @@ def add_student(request):
         return redirect('home')
     
 def add_professor(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     new_record=None
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -219,6 +254,11 @@ def add_professor(request):
         return redirect('home')
     
 def add_course(request):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     new_record=None
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -237,6 +277,11 @@ def add_course(request):
 
     
 def update_srecord(request,pk):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         student_record=Student.objects.get(rollno=pk)
         form=AddStudentForm(request.POST or None, instance=student_record)
@@ -251,6 +296,11 @@ def update_srecord(request,pk):
     
 
 def update_precord(request,pk):
+    if request.user.is_superuser: 
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         prof_record=Professor.objects.get(profid=pk)
         form=AddProfessorForm(request.POST or None, instance=prof_record)
@@ -264,6 +314,11 @@ def update_precord(request,pk):
         return redirect('home')
     
 def update_crecord(request,pk):
+    if request.user.is_superuser:
+        pass
+    else:
+        messages.error(request,'You need to be an admin to view this page.')
+        return(redirect('home'))
     if request.user.is_authenticated:
         course_record=Courses.objects.get(courseid=pk)
         form=AddCourseForm(request.POST or None, instance=course_record)
