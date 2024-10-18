@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from .forms import SignUpForm,AddStudentForm,AddProfessorForm,AddCourseForm
 from .models import Student,Courses,Professor,Scores,Taken,Taughtby
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -56,6 +57,7 @@ def register_user(request):
     return render(request,'register.html',{'form':form})
 
 def student(request):
+<<<<<<< HEAD
     student_records=Student.objects.all()
     accurate=[]
     if request.method=="POST":
@@ -78,6 +80,27 @@ def professor(request):
         searched = request.POST.get('searched')
         accurate=[i for i in professor_records if f"{i.profid}"==searched or i.name==searched or f"{i.phoneno}"==searched or i.email==searched]
     return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
+=======
+    student_records = Student.objects.all()
+    paginator = Paginator(student_records, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'student.html', {'page_obj': page_obj})
+
+def professor(request):
+    professor_records = Professor.objects.all()
+    paginator = Paginator(professor_records, 10)  # Show 10 professors per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'professor.html', {'page_obj': page_obj})
+
+def courses(request):
+    course_records = Courses.objects.all()
+    paginator = Paginator(course_records, 10)  # Show 10 courses per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'courses.html', {'page_obj': page_obj})
+>>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
 
 def student_record(request,pk):
     if request.user.is_authenticated:
