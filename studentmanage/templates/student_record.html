@@ -1,0 +1,21 @@
+{% extends base.html %}
+
+{% block content %}
+    <p>Student name: {{ student.name }}</p>
+    <p>Rollno: {{ student.rollno }}</p>
+    <table>
+        <th>Course</th>
+        <th>Grade</th>
+        {% for course in courses %}
+            <tr>
+                <td>
+                    {{ course }}
+                </td>
+                <td>
+                    {{ courses[course] }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
