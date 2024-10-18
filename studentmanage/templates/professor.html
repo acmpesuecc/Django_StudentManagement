@@ -8,34 +8,49 @@
 
     <h1>Professor Details</h1>
 
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">Professor ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Phone No.</th>
-            <th scope="col">Gender</th>
-            <th scope="col">Email</th>
-            <th scope="col">Date of Joining</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr>
-                {% if professor_records %}
-                {% for record in professor_records %}
+    <div class="row">
+        <div class="card card-body">
+            <table class="table table-sm">
                 <tr>
-                    <td> <a href="{% url 'precord' record.profid%}">{{record.profid}}</a></td>
-                    <td>{{record.name}}</td> 
-                    <td>{{record.phoneno}} </td>
-                    <td>{{record.gender}} </td>
-                    <td>{{record.email}} </td>
-                    <td>{{record.dateofjoining}}</td>
+                    <th>Professor ID</th>
+                    <th>Name</th>
+                    <th>Phone No</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Date of Joining</th>
+                </tr>
+                {% for professor in page_obj %}
+                <tr>
+                    <td>{{ professor.profid }}</td>
+                    <td>{{ professor.name }}</td>
+                    <td>{{ professor.phoneno }}</td>
+                    <td>{{ professor.email }}</td>
+                    <td>{{ professor.gender }}</td>
+                    <td>{{ professor.dateofjoining }}</td>
                 </tr>
                 {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
             {% endif %}
-            </tr>
-        </tbody>
-    </table>
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
     <a href="{% url 'add_professor'%}" class="btn btn-primary"style="margin-left:1000px">Add Professor</a>
 
     <br/>
