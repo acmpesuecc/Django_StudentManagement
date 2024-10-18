@@ -7,41 +7,10 @@
     {% if user.is_authenticated %}
 
     <h1>Professor Details</h1>
-<<<<<<< HEAD
-    <form method="POST">
-        {% csrf_token %}
-        <label>Search:</label>
-        <input type="text" name="searched" class="text-input" /> <!--change name accdly-->
-        <button class="btn btn-primary" type="submit">Search for Proffesor</button>
-    </form>
-    <br>
-    {% if accurate%}
-    {% for i in accurate%}
-    <p><a href="{% url 'precord' i.profid%}">{{i.profid}}: {{i.name}}</a></p>
-    {% endfor %}
-    {% endif %}
-<br>
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">Professor ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Phone No.</th>
-            <th scope="col">Gender</th>
-            <th scope="col">Email</th>
-            <th scope="col">Date of Joining</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr>
-                {% if professor_records %}
-                {% for record in professor_records %}
-=======
 
     <div class="row">
         <div class="card card-body">
             <table class="table table-sm">
->>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
                 <tr>
                     <th>Professor ID</th>
                     <th>Name</th>
@@ -70,13 +39,6 @@
                 <a href="?page=1">&laquo; first</a>
                 <a href="?page={{ page_obj.previous_page_number }}">previous</a>
             {% endif %}
-<<<<<<< HEAD
-            </tr>
-        </tbody>
-    </table>
-    
-    
-=======
 
             <span class="current">
                 Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
@@ -89,7 +51,6 @@
         </span>
     </div>
 
->>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
     <a href="{% url 'add_professor'%}" class="btn btn-primary"style="margin-left:1000px">Add Professor</a>
 
     <br/>

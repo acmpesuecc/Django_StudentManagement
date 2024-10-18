@@ -74,23 +74,17 @@ WSGI_APPLICATION = 'dbmsproj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'dbmsproj', #might be postgres
-        'USER':'postgres', #was root
-        'PASSWORD':'Suraj@123',
+        'NAME':'dbmsproj',
+        'USER':'root',
+        'PASSWORD':'Root123',
         'HOST' :'localhost',
-        'PORT':'5432', #might be 5433
-    } #postgres database creds (password is specific to my system.)
-}'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'PORT':'3306',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

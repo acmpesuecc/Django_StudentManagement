@@ -57,30 +57,6 @@ def register_user(request):
     return render(request,'register.html',{'form':form})
 
 def student(request):
-<<<<<<< HEAD
-    student_records=Student.objects.all()
-    accurate=[]
-    if request.method=="POST":
-        searched = request.POST.get('searched')
-        accurate=[i for i in student_records if f"{i.rollno}"==searched or i.firstname==searched or i.lastname==searched or f"{i.phoneno}"==searched or i.email==searched]
-    return render(request,'student.html',{'student_records':student_records, 'accurate':accurate})
-
-def courses(request):
-    course_records=Courses.objects.all()
-    accurate=[]
-    if request.method=="POST":
-        searched = request.POST.get('searched')
-        accurate=[i for i in course_records if f"{i.courseid}"==searched or i.coursename==searched or i.semester==searched ]
-    return render(request,'courses.html',{'course_records':course_records,"accurate":accurate})
-
-def professor(request):
-    professor_records=Professor.objects.all()
-    accurate=[]
-    if request.method=="POST":
-        searched = request.POST.get('searched')
-        accurate=[i for i in professor_records if f"{i.profid}"==searched or i.name==searched or f"{i.phoneno}"==searched or i.email==searched]
-    return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
-=======
     student_records = Student.objects.all()
     paginator = Paginator(student_records, 10)
     page_number = request.GET.get('page')
@@ -100,7 +76,6 @@ def courses(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'courses.html', {'page_obj': page_obj})
->>>>>>> eb8bdf262bb005fd7133276c345ab0b3613716a0
 
 def student_record(request,pk):
     if request.user.is_authenticated:
