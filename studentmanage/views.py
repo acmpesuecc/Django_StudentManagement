@@ -57,15 +57,27 @@ def register_user(request):
 
 def student(request):
     student_records=Student.objects.all()
-    return render(request,'student.html',{'student_records':student_records})
+    accurate=[]
+    if request.method=="POST":
+        searched = request.POST.get('searched')
+        accurate=[i for i in student_records if f"{i.rollno}"==searched or i.firstname==searched or i.lastname==searched or f"{i.phoneno}"==searched or i.email==searched]
+    return render(request,'student.html',{'student_records':student_records, 'accurate':accurate})
 
 def courses(request):
     course_records=Courses.objects.all()
-    return render(request,'courses.html',{'course_records':course_records})
+    accurate=[]
+    if request.method=="POST":
+        searched = request.POST.get('searched')
+        accurate=[i for i in course_records if f"{i.courseid}"==searched or i.coursename==searched or i.semester==searched ]
+    return render(request,'courses.html',{'course_records':course_records,"accurate":accurate})
 
 def professor(request):
     professor_records=Professor.objects.all()
-    return render(request,'professor.html',{'professor_records':professor_records})
+    accurate=[]
+    if request.method=="POST":
+        searched = request.POST.get('searched')
+        accurate=[i for i in professor_records if f"{i.profid}"==searched or i.name==searched or f"{i.phoneno}"==searched or i.email==searched]
+    return render(request,'professor.html',{'professor_records':professor_records,"accurate":accurate})
 
 def student_record(request,pk):
     if request.user.is_authenticated:
